@@ -31,7 +31,8 @@ function renderList(items, path) {
         path ? path + '/' + item.name : item.name
       )}">${item.name}</a>`;
     } else {
-      name.innerHTML = `<a href="${item.download_url}">${item.name}</a>`;
+      const downloadLink = `https://github.com/${OWNER}/${REPO}/raw/main/${BASE_PATH}/${path ? path + '/' : ''}${item.name}`;
+      name.innerHTML = `<a href="${downloadLink}" download>${item.name}</a>`;
     }
 
     const type = document.createElement('div');
