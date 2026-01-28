@@ -1,8 +1,9 @@
 const BASE_PATH = 'files';
+const OWNER = 'Rinmist-uuoo';
+const REPO = 'cpu-download-site';
 
 async function listDir(path = '') {
-  const apiUrl = `https://api.github.com/repos/Rinmist-uuoo/cpu-download-site/contents/${BASE_PATH}/${path}`;
-
+  const apiUrl = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${BASE_PATH}/${path}`;
   const res = await fetch(apiUrl);
   const data = await res.json();
 
@@ -16,13 +17,30 @@ function renderList(items, path) {
 
   items.forEach(item => {
     const li = document.createElement('li');
+    li.className = 'file-item';
+
+    const icon = document.createElement('div');
+    icon.className = 'file-icon';
+    icon.textContent = item.type === 'dir' ? '📁' : '📄';
+
+    const name = document.createElement('div');
+    name.className = 'file-name';
 
     if (item.type === 'dir') {
-      li.innerHTML = `📁 <a href="?path=${path}/${item.name}">${item.name}</a>`;
+      name.innerHTML = `<a href="?path=${encodeURIComponent(
+        path ? path + '/' + item.name : item.name
+      )}">${item.name}</a>`;
     } else {
-      li.innerHTML = `📄 <a href="${item.download_url}">${item.name}</a>`;
+      name.innerHTML = `<a href="${item.download_url}">${item.name}</a>`;
     }
 
+    const type = document.createElement('div');
+    type.className = 'file-type';
+    type.textContent = item.type === 'dir' ? '文件夹' : '文件';
+
+    li.appendChild(icon);
+    li.appendChild(name);
+    li.appendChild(type);
     ul.appendChild(li);
   });
 }
@@ -31,13 +49,15 @@ function renderBreadcrumb(path) {
   const div = document.getElementById('breadcrumb');
   const parts = path.split('/').filter(Boolean);
 
+  let html = `<a href="?">根目录</a>`;
   let current = '';
-  div.innerHTML = `<a href="?">根目录</a>`;
 
   parts.forEach(p => {
-    current += '/' + p;
-    div.innerHTML += ` / <a href="?path=${current.slice(1)}">${p}</a>`;
+    current += (current ? '/' : '') + p;
+    html += ` / <a href="?path=${encodeURIComponent(current)}">${p}</a>`;
   });
+
+  div.innerHTML = html;
 }
 
 const params = new URLSearchParams(location.search);
