@@ -31,18 +31,24 @@ function renderList(items, path) {
         path ? path + '/' + item.name : item.name
       )}">${item.name}</a>`;
     } else {
-      const downloadLink = `https://github.com/${OWNER}/${REPO}/blob/main/${BASE_PATH}/${path ? path + '/' : ''}${item.name}?raw=true`;
-      name.innerHTML = `<a href="${downloadLink}" download>${item.name}</a>`;
-    }
+  const filePath = `${BASE_PATH}/${path ? path + '/' : ''}${item.name}`;
+  const rawUrl = `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${filePath}`;
 
-    const type = document.createElement('div');
-    type.className = 'file-type';
-    type.textContent = item.type === 'dir' ? '文件夹' : '文件';
+  name.innerHTML = `<a href="#" data-url="${rawUrl}" data-name="${item.name}">${item.name}</a>`;
 
-    li.appendChild(icon);
-    li.appendChild(name);
-    li.appendChild(type);
-    ul.appendChild(li);
+  name.querySelector('a').addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    const res = await fetch(rawUrl);
+    const blob = await res.blob();
+
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = item.name;
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(a.href);
+    a.remove();
   });
 }
 
