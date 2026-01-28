@@ -31,7 +31,7 @@ function renderList(items, path) {
         path ? path + '/' + item.name : item.name
       )}">${item.name}</a>`;
     } else {
-      const downloadLink = `https://github.com/${OWNER}/${REPO}/raw/main/${BASE_PATH}/${path ? path + '/' : ''}${item.name}`;
+      const downloadLink = `https://github.com/${OWNER}/${REPO}/blob/main/${BASE_PATH}/${path ? path + '/' : ''}${item.name}?raw=true`;
       name.innerHTML = `<a href="${downloadLink}" download>${item.name}</a>`;
     }
 
